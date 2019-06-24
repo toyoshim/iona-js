@@ -15,12 +15,17 @@ char U4ToHex(uint8_t val) {
 }
 
 void delayU8x1usec(uint8_t x1us) {
-  // At 16MHz, 1us = 16tau
+  // At 16MHz, 1us = 16tau (PROTO: 8MHz, 1us = 8tau)
   asm (
       "mov r18, %0\n"  // 1t
-      "1:\n"           // LOOP 1: 16t
+      "1:\n"           // LOOP 1: 16t (PROTO: 8t)
+#if defined(PROTO)
+      "ldi r19, 1\n"   //  1t
+      "nop\n"          //  1t
+#else
       "ldi r19, 4\n"   //  1t
-      "2:\n"           //  LOOP 2: 11t
+#endif
+      "2:\n"           //  LOOP 2: 11t (PROTO: 2t)
       "dec r19\n"      //   1t
       "brne 2b\n"      //   2t (1t for not taken)
       "nop\n"          // 1t
@@ -34,9 +39,13 @@ void delayU8x1usec(uint8_t x1us) {
 
 // Use PD1(TXD) for serial debug logging.
 SerialLibrary::SerialLibrary() {
-  // U2X, 117.647Kbps (+2.1%)
+  // U2X, 117.647Kbps [+2.1%] (PROTO: 111.111Kbps [-5.6%])
   UBRRH = 0;
+#if defined(PROTO)
+  UBRRL = 8;
+#else
   UBRRL = 16;
+#endif
   UCSRA = 0x02;
   // TX enabled
   UCSRB = (UCSRB & 0x90) | 0x08;
@@ -49,8 +58,10 @@ SerialLibrary::SerialLibrary() {
 }
 
 void SerialLibrary::print(uint8_t val) {
+#if !defined(PROTO)
   while (!(UCSRA & (1 << UDRE)));
   UDR = val;
+#endif
 }
 
 void SerialLibrary::print(uint8_t val, enum Type type) {

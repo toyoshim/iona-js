@@ -81,7 +81,11 @@ class DIPSW final {
   bool swap = false;
 };
 
+#if defined(PROTO)
+const char id[] = "SEGA ENTERPRISES,LTD.compat;IONA-KVC-P0;ver1.00";
+#else
 const char id[] = "SEGA ENTERPRISES,LTD.compat;MP01-IONA-JS;ver1.00";
+#endif
 uint8_t gpout = 0;
 
 Jamma jamma;

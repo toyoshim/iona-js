@@ -5,6 +5,8 @@
 CC	= avr-g++
 OBJCOPY	= avr-objcopy
 MCU	= atmega32a
+# for PROTO PCB build that uses the internal RC 8MHz to run.
+#CFLAGS	= -Os -Wall -mmcu=$(MCU) -std=c++11 -I$(PWD) -DPROTO
 CFLAGS	= -Os -Wall -mmcu=$(MCU) -std=c++11 -I$(PWD)
 LFLAGS	= -Wall -mmcu=$(MCU)
 DUDEOPT	= -C ~/opt/etc/avrdude.conf -c usbtiny -pm32
@@ -25,8 +27,13 @@ program: $(TARGET).hex
 # Fuse High - 1100 1001 - !OCDEN | !JTAGEN | SPIEN | CKOPT | !EESAVE | BOOT(APP)
 # Fuse Low  - 1110 1111 - !BODLEVEL | !BODEN | SUT(10) | CLSEL(1111-EXT)
 #   expects 16MHz external clock
+#   (PROTO) - 1110 0100 - !BODLEVEL | !BODEN | SUT(10) | CLSEL(0100-RC)
+#   expects 8MHz RC internal clock
 fuse:
 	avrdude $(DUDEOPT) -U lfuse:w:0xef:m -U hfuse:w:0xc9:m
+
+fuse-proto:
+	avrdude $(DUDEOPT) -U lfuse:w:0xe4:m -U hfuse:w:0xc9:m
 
 %.hex: %.elf
 	$(OBJCOPY) -O ihex $< $@

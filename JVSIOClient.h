@@ -7,7 +7,7 @@
 
 #include "jvsio/JVSIO.h"
 
-// Use PD0 as DATA+, and PD2 as DATA-.
+// Use PD0 as DATA+, and PD2 as DATA-. (PROTO: PD1 as DATA-)
 // Receiving data is decoded by hardware, via RXD interface of PD0.
 // Sending data is manually handled to make differential signal pairs.
 // JVS relies on 115.2Kbps, 8-bits, non-parity, 1 start/stop-bit UART.

@@ -29,18 +29,28 @@ ISR(USART_RXC_vect) {
 }  // namespace
 
 JVSIODataClient::JVSIODataClient() {
-  // U2X, 117.647Kbps (+2.1%)
+  // U2X, 117.647Kbps [+2.1%] (PROTO: 111.111Kbps [-5.6%])
   UBRRH = 0;
+#if defined(PROTO)
+  UBRRL = 8;
+#else
   UBRRL = 16;
+#endif
   UCSRA = 0x02;
   // RX enabled, interrupt ON
   UCSRB = (UCSRB & 0x48) | 0x90;
   // 8-bits, non-parity, 1 stop-bit
   UCSRC = 0x86;
 
+#if defined(PROTO)
+  // PD1 Input
+  DDRD &= ~0x02;
+  PORTD &= ~0x02;
+#else
   // PD2 Input
   DDRD &= ~0x04;
   PORTD &= ~0x04;
+#endif
   // PD0 Output (but masked during RX being enabled), Pull-up
   DDRD |= 0x01;
   PORTD |= 0x01;
@@ -56,10 +66,18 @@ void JVSIODataClient::setMode(int mode) {
   uint8_t oldSREG = SREG;
   cli();
   if (mode == INPUT) {
+#if defined(PROTO)
+    DDRD &= ~0x02;
+#else
     DDRD &= ~0x04;
+#endif
     UCSRB |= 0x90;   // RX enabled, interrupt ON
   } else {
+#if defined(PROTO)
+    DDRD |= 0x02;
+#else
     DDRD |= 0x04;
+#endif
     UCSRB &= ~0x90;  // RX disabled, interrupt OFF
   }
   SREG = oldSREG;
@@ -87,23 +105,35 @@ uint8_t JVSIODataClient::read() {
 }
 
 void JVSIODataClient::write(uint8_t data) {
-  // 138t for each bit.
+  // 138t for each bit. (PROTO: 69t)
   asm (
     "rjmp 4f\n"
 
-   // Spends 134t = 8 + 1 + 3 x N - 1 + 2 + 4; N = 40
+   // Spends 134t = 8 + 1 + 3 x N - 1 + 2 + 4; N = 40 (PROTO: 65t; N = 17)
    "1:\n"
     "brcs 2f\n"      // 2t (1t for not taken)
     "nop\n"          // 1t
     "cbi 0x12, 0\n"  // 2t
+#if defined(PROTO)
+    "sbi 0x12, 1\n"  // 2t
+#else
     "sbi 0x12, 2\n"  // 2t
+#endif
     "rjmp 3f\n"      // 2t (1 + 1 + 2 + 2 + 2)
    "2:\n"
     "sbi 0x12, 0\n"  // 2t
+#if defined(PROTO)
+    "cbi 0x12, 1\n"  // 2t
+#else
     "cbi 0x12, 2\n"  // 2t
+#endif
     "rjmp 3f\n"      // 2t (2 + 2 + 2 + 2)
    "3:\n"
+#if defined(PROTO)
+    "ldi r19, 17\n"  // 1t
+#else
     "ldi r19, 40\n"  // 1t
+#endif
    "2:\n"
     "dec r19\n"      // 1t
     "brne 2b\n"      // 2t (1t for not taken)
