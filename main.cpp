@@ -167,16 +167,12 @@ void loop(JVSIO& io) {
     }
     break;
    case JVSIO::kCmdCoinSub:
-    if (data[1] < 2)
-      jamma.SubCoin(data[1], data[3]);
+    jamma.SubCoin(data[1] - 1, data[3]);
     io.pushReport(JVSIO::kReportOk);
     break;
    case JVSIO::kCmdDriverOutput:
     gpout = data[2];
     io.pushReport(JVSIO::kReportOk);
-    Serial.print("gpout: ");
-    Serial.print(gpout, HEX);
-    Serial.println("");
     break;
   }
 }

@@ -114,6 +114,7 @@ uint8_t Jamma::GetCoin(uint8_t index) {
   return coin_count[index];
 }
 
-void Jamma::SubCoin(int index, uint8_t sub) {
-  coin_count[index] -= sub;
+void Jamma::SubCoin(uint8_t index, uint8_t sub) {
+  if (index < 2)
+    coin_count[index] -= sub;
 }
