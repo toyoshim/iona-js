@@ -37,24 +37,34 @@ void Jamma::Update(bool swap) {
       ((pina & 0x08) ? 0 : 0x04);
   if (swap) {
     sw[0] |=
-        ((pinb & 0x20) ? 0 : 0x02) |
-        ((pinb & 0x04) ? 0 : 0x01);
+#if defined(ALT_SWAP)
+        ((pinb & 0x08) ? 0 : 0x02) |  // B2 -> B1
+        ((pinb & 0x10) ? 0 : 0x01);   // B3 -> B2
+#else
+        ((pinb & 0x20) ? 0 : 0x02) |  // B4 -> B1
+        ((pinb & 0x04) ? 0 : 0x01);   // B1 -> B2
+#endif
   } else {
     sw[0] |=
-        ((pinb & 0x04) ? 0 : 0x02) |
-        ((pinb & 0x08) ? 0 : 0x01);
+        ((pinb & 0x04) ? 0 : 0x02) |  // B1
+        ((pinb & 0x08) ? 0 : 0x01);   // B2
   }
   sw[1] =
-      ((pinb & 0x40) ? 0 : 0x20) |
-      ((pinb & 0x80) ? 0 : 0x10);
+      ((pinb & 0x40) ? 0 : 0x20) |    // B5
+      ((pinb & 0x80) ? 0 : 0x10);     // B6
   if (swap) {
     sw[1] |=
-        ((pinb & 0x08) ? 0 : 0x80) |
-        ((pinb & 0x10) ? 0 : 0x40);
+#if defined(ALT_SWAP)
+        ((pinb & 0x20) ? 0 : 0x80) |  // B4 -> B3
+        ((pinb & 0x04) ? 0 : 0x40);   // B1 -> B4
+#else
+        ((pinb & 0x08) ? 0 : 0x80) |  // B2 -> B3
+        ((pinb & 0x10) ? 0 : 0x40);   // B3 -> B4
+#endif
   } else {
     sw[1] |=
-        ((pinb & 0x10) ? 0 : 0x80) |
-        ((pinb & 0x20) ? 0 : 0x40);
+        ((pinb & 0x10) ? 0 : 0x80) |  // B3
+        ((pinb & 0x20) ? 0 : 0x40);   // B4
   }
   sw[2] =
       ((pinc & 0x02) ? 0 : 0x80) |
@@ -64,24 +74,34 @@ void Jamma::Update(bool swap) {
       ((pina & 0x80) ? 0 : 0x04);
   if (swap) {
     sw[2] |=
-        ((pinc & 0x20) ? 0 : 0x02) |
-        ((pinc & 0x04) ? 0 : 0x01);
+#if defined(ALT_SWAP)
+        ((pinc & 0x08) ? 0 : 0x02) |  // B2 -> B1
+        ((pinc & 0x10) ? 0 : 0x01);   // B3 -> B2
+#else
+        ((pinc & 0x20) ? 0 : 0x02) |  // B4 -> B1
+        ((pinc & 0x04) ? 0 : 0x01);   // B1 -> B2
+#endif
   } else {
     sw[2] |=
-        ((pinc & 0x04) ? 0 : 0x02) |
-        ((pinc & 0x08) ? 0 : 0x01);
+        ((pinc & 0x04) ? 0 : 0x02) |  // B1
+        ((pinc & 0x08) ? 0 : 0x01);   // B2
   }
   sw[3] =
-      ((pinc & 0x40) ? 0 : 0x20) |
-      ((pinc & 0x80) ? 0 : 0x10);
+      ((pinc & 0x40) ? 0 : 0x20) |    // B5
+      ((pinc & 0x80) ? 0 : 0x10);     // B6
   if (swap) {
     sw[3] |=
-        ((pinc & 0x08) ? 0 : 0x80) |
-        ((pinc & 0x10) ? 0 : 0x40);
+#if defined(ALT_SWAP)
+        ((pinc & 0x20) ? 0 : 0x80) |  // B4 -> B3
+        ((pinc & 0x04) ? 0 : 0x40);   // B1 -> B4
+#else
+        ((pinc & 0x08) ? 0 : 0x80) |  // B2 -> B3
+        ((pinc & 0x10) ? 0 : 0x40);   // B3 -> B4
+#endif
   } else {
     sw[3] |=
-        ((pinc & 0x10) ? 0 : 0x80) |
-        ((pinc & 0x20) ? 0 : 0x40);
+        ((pinc & 0x10) ? 0 : 0x80) |  // B3
+        ((pinc & 0x20) ? 0 : 0x40);   // B4
   }
 
   uint8_t csw1 = pinb & 1;

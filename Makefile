@@ -7,6 +7,7 @@ OBJCOPY	= avr-objcopy
 MCU	= atmega32a
 # for PROTO PCB build that uses the internal RC 8MHz to run.
 #CFLAGS	= -Os -Wall -mmcu=$(MCU) -std=c++11 -I$(PWD) -DPROTO
+#CFLAGS	= -Os -Wall -mmcu=$(MCU) -std=c++11 -I$(PWD) -DALT_SWAP
 CFLAGS	= -Os -Wall -mmcu=$(MCU) -std=c++11 -I$(PWD)
 LFLAGS	= -Wall -mmcu=$(MCU)
 DUDEOPT	= -C ~/opt/etc/avrdude.conf -c usbtiny -pm32
