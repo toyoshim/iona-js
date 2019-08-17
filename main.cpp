@@ -82,9 +82,9 @@ class DIPSW final {
 };
 
 #if defined(PROTO)
-const char id[] = "SEGA ENTERPRISES,LTD.compat;IONA-KVC-P0;ver1.00";
+const char id[] = "SEGA ENTERPRISES,LTD.compat;IONA-KVC-P0;ver1.01";
 #else
-const char id[] = "SEGA ENTERPRISES,LTD.compat;MP01-IONA-JS;ver1.00";
+const char id[] = "SEGA ENTERPRISES,LTD.compat;MP01-IONA-JS;ver1.01";
 #endif
 uint8_t gpout = 0;
 
@@ -183,7 +183,7 @@ int main() {
   JVSIODataClient data;
   JVSIOSenseClient sense;
   JVSIO::LedClient led;
-  Serial.println("IONA JAMMA Standard Model - Ver 1.00");
+  Serial.println("IONA JAMMA Standard Model - Ver 1.01");
   Serial.println(id);
 
   JVSIO io(&data, &sense, &led);
