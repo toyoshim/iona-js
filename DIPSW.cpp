@@ -40,7 +40,9 @@ void DIPSW::Update() {
     rapid_th = 1;
     break;
   }
+#if !defined(NO_SWAP)
   swap = dipsw & 2;
+#endif
 }
 
 void DIPSW::Sync() {

@@ -18,7 +18,7 @@ class Jamma final {
   void SubCoin(uint8_t index, uint8_t sub);
 
  private:
-  uint8_t sw[4];
+  uint8_t sw[5];
   uint8_t current_coin_sw[2];
   uint8_t coin_sw[2];
   uint8_t coin_count[2];

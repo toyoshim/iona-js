@@ -14,6 +14,13 @@ Jamma::Jamma() {
   PORTA = 0xff;
   PORTB = 0xff;
   PORTC = 0xff;
+#if defined(NO_DEBUG)
+  DDRD &= ~0x12;
+  PORTD |= 0x12;
+#else
+  DDRD &= ~0x10;
+  PORTD |= 0x10;
+#endif
   Initialize();
 }
 
@@ -23,7 +30,7 @@ void Jamma::Initialize() {
     coin_sw[i] = 1;
     coin_count[i] = 0;
   }
-  for (uint8_t i = 0; i < 4; ++i)
+  for (uint8_t i = 0; i < 5; ++i)
     sw[i] = 0;
 }
 
@@ -31,15 +38,18 @@ void Jamma::Update(bool swap) {
   uint8_t pina = PINA;
   uint8_t pinb = PINB;
   uint8_t pinc = PINC;
+  uint8_t pind = PIND;
 
-  sw[0] =
+  sw[0] = (pind & 0x10) ? 0 : 0x80;
+  sw[1] =
       ((pinb & 0x02) ? 0 : 0x80) |
+      ((pind & 0x02) ? 0 : 0x40) |
       ((pina & 0x01) ? 0 : 0x20) |
       ((pina & 0x02) ? 0 : 0x10) |
       ((pina & 0x04) ? 0 : 0x08) |
       ((pina & 0x08) ? 0 : 0x04);
   if (swap) {
-    sw[0] |=
+    sw[1] |=
 #if defined(ALT_SWAP)
         ((pinb & 0x08) ? 0 : 0x02) |  // B2 -> B1
         ((pinb & 0x10) ? 0 : 0x01);   // B3 -> B2
@@ -48,15 +58,15 @@ void Jamma::Update(bool swap) {
         ((pinb & 0x04) ? 0 : 0x01);   // B1 -> B2
 #endif
   } else {
-    sw[0] |=
+    sw[1] |=
         ((pinb & 0x04) ? 0 : 0x02) |  // B1
         ((pinb & 0x08) ? 0 : 0x01);   // B2
   }
-  sw[1] =
+  sw[2] =
       ((pinb & 0x40) ? 0 : 0x20) |    // B5
       ((pinb & 0x80) ? 0 : 0x10);     // B6
   if (swap) {
-    sw[1] |=
+    sw[2] |=
 #if defined(ALT_SWAP)
         ((pinb & 0x20) ? 0 : 0x80) |  // B4 -> B3
         ((pinb & 0x04) ? 0 : 0x40);   // B1 -> B4
@@ -65,18 +75,18 @@ void Jamma::Update(bool swap) {
         ((pinb & 0x10) ? 0 : 0x40);   // B3 -> B4
 #endif
   } else {
-    sw[1] |=
+    sw[2] |=
         ((pinb & 0x10) ? 0 : 0x80) |  // B3
         ((pinb & 0x20) ? 0 : 0x40);   // B4
   }
-  sw[2] =
+  sw[3] =
       ((pinc & 0x02) ? 0 : 0x80) |
       ((pina & 0x10) ? 0 : 0x20) |
       ((pina & 0x20) ? 0 : 0x10) |
       ((pina & 0x40) ? 0 : 0x08) |
       ((pina & 0x80) ? 0 : 0x04);
   if (swap) {
-    sw[2] |=
+    sw[3] |=
 #if defined(ALT_SWAP)
         ((pinc & 0x08) ? 0 : 0x02) |  // B2 -> B1
         ((pinc & 0x10) ? 0 : 0x01);   // B3 -> B2
@@ -85,15 +95,15 @@ void Jamma::Update(bool swap) {
         ((pinc & 0x04) ? 0 : 0x01);   // B1 -> B2
 #endif
   } else {
-    sw[2] |=
+    sw[3] |=
         ((pinc & 0x04) ? 0 : 0x02) |  // B1
         ((pinc & 0x08) ? 0 : 0x01);   // B2
   }
-  sw[3] =
+  sw[4] =
       ((pinc & 0x40) ? 0 : 0x20) |    // B5
       ((pinc & 0x80) ? 0 : 0x10);     // B6
   if (swap) {
-    sw[3] |=
+    sw[4] |=
 #if defined(ALT_SWAP)
         ((pinc & 0x20) ? 0 : 0x80) |  // B4 -> B3
         ((pinc & 0x04) ? 0 : 0x40);   // B1 -> B4
@@ -102,7 +112,7 @@ void Jamma::Update(bool swap) {
         ((pinc & 0x10) ? 0 : 0x40);   // B3 -> B4
 #endif
   } else {
-    sw[3] |=
+    sw[4] |=
         ((pinc & 0x10) ? 0 : 0x80) |  // B3
         ((pinc & 0x20) ? 0 : 0x40);   // B4
   }
@@ -125,15 +135,18 @@ void Jamma::Sync() {
 uint8_t Jamma::GetSw(uint8_t index, bool rapid_mode, bool rapid_mask) {
   uint8_t result = sw[index];
   if (rapid_mode) switch (index) {
-   case 0:
-   case 2:
-    if (!rapid_mask)
-      result |= (sw[index + 1] >> 5) & 0x03;
-    break;
-   case 1:
-   case 3:
-    if (!rapid_mask)
-      result |= (result << 3) & 0x80;
+    case 0:
+      break;
+    case 1:
+    case 3:
+      if (!rapid_mask)
+        result |= (sw[index + 1] >> 5) & 0x03;
+      break;
+    case 2:
+    case 4:
+      if (!rapid_mask)
+        result |= (result << 3) & 0x80;
+      break;
   }
   return result;
 }

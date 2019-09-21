@@ -68,13 +68,13 @@ void loop(JVSIO& io) {
     jamma.Sync();
     io.pushReport(JVSIO::kReportOk);
     if (data[1] == 2 && data[2] == 2) {
-      io.pushReport(0x00);
       bool mode = dipsw.GetRapidMode();
       bool mask = dipsw.GetRapidMask();
       io.pushReport(jamma.GetSw(0, mode, mask));
       io.pushReport(jamma.GetSw(1, mode, mask));
       io.pushReport(jamma.GetSw(2, mode, mask));
       io.pushReport(jamma.GetSw(3, mode, mask));
+      io.pushReport(jamma.GetSw(4, mode, mask));
     } else {
       Serial.println("Err CmdSwInput");
     }

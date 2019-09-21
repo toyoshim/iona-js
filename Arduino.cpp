@@ -52,13 +52,15 @@ SerialLibrary::SerialLibrary() {
   // 8-bits, non-parity, 1 stop-bit
   UCSRC = 0x86;
 
+#if !defined(NO_DEBUG)
   // Output, High
   PORTD |= 0x02;
   DDRD |= 0x02;
+#endif
 }
 
 void SerialLibrary::print(uint8_t val) {
-#if !defined(PROTO)
+#if !defined(PROTO) && !defined(NO_DEBUG)
   while (!(UCSRA & (1 << UDRE)));
   UDR = val;
 #endif
