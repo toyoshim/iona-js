@@ -12,7 +12,7 @@ CFLAGS	= -Os -Wall -mmcu=$(MCU) -std=c++11 -I$(PWD)
 LFLAGS	= -Wall -mmcu=$(MCU)
 DUDEOPT	= -C ~/opt/etc/avrdude.conf -c usbtiny -pm32
 TARGET	= iona-basic
-OBJS	= JVSIO.o JVSIOClient.o Jamma.o Arduino.o main.o
+OBJS	= JVSIO.o JVSIOClient.o Jamma.o DIPSW.o Arduino.o main.o
 
 all: $(TARGET).hex
 

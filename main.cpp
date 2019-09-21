@@ -5,81 +5,11 @@
 #include <avr/interrupt.h>
 
 #include "Arduino.h"
+#include "DIPSW.h"
 #include "Jamma.h"
 #include "JVSIOClient.h"
 
 namespace {
-
-class DIPSW final {
- public:
-  DIPSW() {
-    DDRD &= ~0x78;
-    PORTD |= 0x78;
-    Update();
-  }
-
-  void Update() {
-    uint8_t old = dipsw;
-    dipsw = Peek();
-    if (old == dipsw)
-      return;
-    Serial.print("DIPSW: ");
-    Serial.print(dipsw, BIN);
-    Serial.println("");
-    rapid = dipsw & 1;
-    switch (dipsw & 0x0c) {
-     case 0x00:  // __00 - 12
-      rapid_mod = 5;
-      rapid_th = 2;
-      break;
-     case 0x08:  // __01 - 15
-      rapid_mod = 4;
-      rapid_th = 2;
-      break;
-     case 0x04:  // __10 - 20
-      rapid_mod = 3;
-      rapid_th = 1;
-      break;
-     case 0x0c:  // __11 - 30
-      rapid_mod = 2;
-      rapid_th = 1;
-      break;
-    }
-    swap = dipsw & 2;
-  }
-
-  void Sync() {
-    if (!rapid)
-      return;
-    rapid_count++;
-    if (rapid_count == rapid_mod)
-      rapid_count = 0;
-  }
-
-  bool GetRapidMode() {
-    return rapid;
-  }
-
-  bool GetRapidMask() {
-    return rapid_count < rapid_th;
-  }
-
-  bool GetSwapMode() {
-    return swap;
-  }
-
- private:
-  uint8_t Peek() {
-    return ~(PIND >> 3) & 0x0f;
-  }
-
-  uint8_t dipsw = 0xff;
-  bool rapid = false;
-  uint8_t rapid_count = 0;
-  uint8_t rapid_mod = 0;
-  uint8_t rapid_th = 0;
-  bool swap = false;
-};
 
 #if defined(PROTO)
 const char id[] = "SEGA ENTERPRISES,LTD.compat;IONA-KVC-P0;ver1.01";
