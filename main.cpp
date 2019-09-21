@@ -84,7 +84,7 @@ class DIPSW final {
 #if defined(PROTO)
 const char id[] = "SEGA ENTERPRISES,LTD.compat;IONA-KVC-P0;ver1.01";
 #else
-const char id[] = "SEGA ENTERPRISES,LTD.compat;MP01-IONA-JS;ver1.01";
+const char id[] = "SEGA ENTERPRISES,LTD.compat;MP01-IONA-JS;ver1.01a";
 #endif
 uint8_t gpout = 0;
 
@@ -135,6 +135,7 @@ void loop(JVSIO& io) {
     break;
    case JVSIO::kCmdSwInput:
     dipsw.Sync();
+    jamma.Sync();
     io.pushReport(JVSIO::kReportOk);
     if (data[1] == 2 && data[2] == 2) {
       io.pushReport(0x00);

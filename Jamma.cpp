@@ -18,8 +18,11 @@ Jamma::Jamma() {
 }
 
 void Jamma::Initialize() {
-  coin_count[0] = 0;
-  coin_count[1] = 0;
+  for (uint8_t i = 0; i < 2; ++i) {
+    current_coin_sw[i] = 1;
+    coin_sw[i] = 1;
+    coin_count[i] = 0;
+  }
   for (uint8_t i = 0; i < 4; ++i)
     sw[i] = 0;
 }
@@ -106,12 +109,17 @@ void Jamma::Update(bool swap) {
 
   uint8_t csw1 = pinb & 1;
   uint8_t csw2 = pinc & 1;
-  if (csw1 && !coin_sw[0])
-    coin_count[0]++;
-  if (csw2 && !coin_sw[1])
-    coin_count[1]++;
-  coin_sw[0] = csw1;
-  coin_sw[1] = csw2;
+  current_coin_sw[0] &= csw1;
+  current_coin_sw[1] &= csw2;
+}
+
+void Jamma::Sync() {
+  for (uint8_t i = 0; i < 2; ++i) {
+    if (!coin_sw[i] && current_coin_sw[i])
+      coin_count[i]++;
+    coin_sw[i] = current_coin_sw[i];
+    current_coin_sw[i] = 1;
+  }
 }
 
 uint8_t Jamma::GetSw(uint8_t index, bool rapid_mode, bool rapid_mask) {
