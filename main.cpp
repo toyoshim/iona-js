@@ -12,11 +12,12 @@
 namespace {
 
 #if defined(PROTO)
-const char id[] = "SEGA ENTERPRISES,LTD.compat;IONA-KVC-P0;ver1.10a";
+const char id[] = "SEGA ENTERPRISES,LTD.compat;IONA-KVC-P0;ver1.10b";
 #else
-const char id[] = "SEGA ENTERPRISES,LTD.compat;MP01-IONA-JS;ver1.10a";
+const char id[] = "SEGA ENTERPRISES,LTD.compat;MP01-IONA-JS;ver1.10b";
 #endif
 uint8_t gpout = 0;
+int8_t coin_index_bias = 0;
 
 Jamma jamma;
 DIPSW dipsw;
@@ -98,7 +99,12 @@ void loop(JVSIO& io) {
     }
     break;
    case JVSIO::kCmdCoinSub:
-    jamma.SubCoin(data[1] - 1, data[3]);
+    // Coin slot index should start with 1, but some PCB seem to expect starting
+    // with 0. Following code detects the slot index 0 and sets the bias to 1
+    // so that it offsets.
+    if (data[1] == 0)
+      coin_index_bias = 1;
+    jamma.SubCoin(data[1] + coin_index_bias - 1, data[3]);
     io.pushReport(JVSIO::kReportOk);
     break;
    case JVSIO::kCmdDriverOutput:
