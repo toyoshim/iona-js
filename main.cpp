@@ -12,9 +12,9 @@
 namespace {
 
 #if defined(PROTO)
-const char id[] = "SEGA ENTERPRISES,LTD.compat;IONA-KVC-P0;ver1.01";
+const char id[] = "SEGA ENTERPRISES,LTD.compat;IONA-KVC-P0;ver1.10a";
 #else
-const char id[] = "SEGA ENTERPRISES,LTD.compat;MP01-IONA-JS;ver1.10";
+const char id[] = "SEGA ENTERPRISES,LTD.compat;MP01-IONA-JS;ver1.10a";
 #endif
 uint8_t gpout = 0;
 
@@ -81,18 +81,18 @@ void loop(JVSIO& io) {
     break;
    case JVSIO::kCmdCoinInput:
     io.pushReport(JVSIO::kReportOk);
-    if (data[1] == 2) {
-      io.pushReport((0 << 6) | 0);
-      io.pushReport(jamma.GetCoin(0));
-      io.pushReport((0 << 6) | 0);
-      io.pushReport(jamma.GetCoin(1));
+    if (data[1] <= 2) {
+      for (uint8_t i = 0; i < data[1]; ++i) {
+        io.pushReport((0 << 6) | 0);
+        io.pushReport(jamma.GetCoin(i));
+      }
     } else {
       Serial.println("Err CmdCoinInput");
     }
     break;
    case JVSIO::kCmdAnalogInput:
     io.pushReport(JVSIO::kReportOk);
-    for (size_t channel = 0; channel < data[1]; ++channel) {
+    for (uint8_t channel = 0; channel < data[1]; ++channel) {
       io.pushReport(0x80);
       io.pushReport(0x00);
     }
@@ -114,7 +114,6 @@ int main() {
   JVSIODataClient data;
   JVSIOSenseClient sense;
   JVSIO::LedClient led;
-  Serial.println("IONA JAMMA Standard Model - Ver 1.10");
   Serial.println(id);
 
   JVSIO io(&data, &sense, &led);
