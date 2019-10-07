@@ -12,9 +12,9 @@
 namespace {
 
 #if defined(PROTO)
-const char id[] = "SEGA ENTERPRISES,LTD.compat;IONA-KVC-P0;ver1.10b";
+const char id[] = "SEGA ENTERPRISES,LTD.compat;IONA-KVC-P0;ver1.10c";
 #else
-const char id[] = "SEGA ENTERPRISES,LTD.compat;MP01-IONA-JS;ver1.10b";
+const char id[] = "SEGA ENTERPRISES,LTD.compat;MP01-IONA-JS;ver1.10c";
 #endif
 uint8_t gpout = 0;
 int8_t coin_index_bias = 0;
@@ -34,13 +34,13 @@ void loop(JVSIO& io) {
   switch (*data) {
    case JVSIO::kCmdReset:
     coin_index_bias = 0;
+    jamma.Initialize();
     break;
    case JVSIO::kCmdIoId:
     io.pushReport(JVSIO::kReportOk);
     for (size_t i = 0; id[i]; ++i)
       io.pushReport(id[i]);
     io.pushReport(0x00);
-    jamma.Initialize();
     break;
    case JVSIO::kCmdFunctionCheck:
     io.pushReport(JVSIO::kReportOk);
