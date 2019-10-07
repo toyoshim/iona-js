@@ -11,11 +11,12 @@ JVS仕様の基板に旧JAMMA規格のコントローラを接続するための
 *注意: バージョン毎の不具合、機能の差分については末尾のバージョンについての項をご覧ください。*
 
 ## 対応機種
-SEGA NAOMI、LINDBERGH、namco SYSTEM12、SYSTEM246/256、TAITO Type X、X2といった代表的なシステム基板で動作確認しています。 
+SEGA NAOMI、LINDBERGH、namco SYSTEM12、SYSTEM246/256、KONAMI SYSTEM-573、TAITO Type X、X2、exA-Arcadiaといった代表的なシステム基板で動作確認しています。 
 確認済みタイトルは[こちら](https://github.com/toyoshim/iona/wiki/Compatibility-Information)のページで詳しく確認できます。
 アナログ入力や銃といった特殊なコントローラを必要とせず、レバーと6ボタンで対応できるゲームなら動作すると思われます。
 互換性リストに載ってないタイトルでの動作実績を確認された方はぜひご連絡下さい。
 未対応タイトルがあればファームウェアアップデートで対応したいと思います。
+現在の最新ファームウェアはVer 1.10cです。
 
 ## 接続方法
 NAOMIにおける接続例です。NAOMI側の映像、音声、電源は別途接続します。
