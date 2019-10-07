@@ -32,6 +32,9 @@ void loop(JVSIO& io) {
   }
 
   switch (*data) {
+   case JVSIO::kCmdReset:
+    coin_index_bias = 0;
+    break;
    case JVSIO::kCmdIoId:
     io.pushReport(JVSIO::kReportOk);
     for (size_t i = 0; id[i]; ++i)
