@@ -12,9 +12,9 @@
 namespace {
 
 #if defined(PROTO)
-const char id[] = "SEGA ENTERPRISES,LTD.compat;IONA-KVC-P0;ver1.10c";
+const char id[] = "SEGA ENTERPRISES,LTD.compat;IONA-KVC-P0;ver1.10d";
 #else
-const char id[] = "SEGA ENTERPRISES,LTD.compat;MP01-IONA-JS;ver1.10c";
+const char id[] = "SEGA ENTERPRISES,LTD.compat;MP01-IONA-JS;ver1.10d";
 #endif
 uint8_t gpout = 0;
 int8_t coin_index_bias = 0;
@@ -50,6 +50,11 @@ void loop(JVSIO& io) {
     io.pushReport(0x0C);  // buttons
     io.pushReport(0x00);
 
+    io.pushReport(0x02);  // coin
+    io.pushReport(0x02);  // slots
+    io.pushReport(0x00);
+    io.pushReport(0x00);
+
     io.pushReport(0x03);  // analog inputs
     io.pushReport(0x08);  // channels
     io.pushReport(0x00);  // bits
@@ -57,11 +62,6 @@ void loop(JVSIO& io) {
 
     io.pushReport(0x12);  // general purpose driver
     io.pushReport(0x08);  // slots
-    io.pushReport(0x00);
-    io.pushReport(0x00);
-
-    io.pushReport(0x02);  // coin
-    io.pushReport(0x02);  // slots
     io.pushReport(0x00);
     io.pushReport(0x00);
 
