@@ -159,3 +159,8 @@ void Jamma::SubCoin(uint8_t index, uint8_t sub) {
   if (index < 2)
     coin_count[index] -= sub;
 }
+
+void Jamma::AddCoin(uint8_t index, uint8_t add) {
+  if (index < 2)
+    coin_count[index] += add;
+}

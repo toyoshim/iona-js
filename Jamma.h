@@ -16,6 +16,7 @@ class Jamma final {
   uint8_t GetSw(uint8_t index, bool rapid_mode, bool rapid_mask);
   uint8_t GetCoin(uint8_t index);
   void SubCoin(uint8_t index, uint8_t sub);
+  void AddCoin(uint8_t index, uint8_t sub);
 
  private:
   uint8_t sw[5];
