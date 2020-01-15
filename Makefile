@@ -6,6 +6,9 @@
 #CFLAGS	= -Os -Wall -mmcu=$(MCU) -std=c++11 -I$(PWD) -DPROTO
 #CFLAGS	= -Os -Wall -mmcu=$(MCU) -std=c++11 -I$(PWD) -DALT_SWAP
 
+# Default flags for Ver 1.01 PCB.
+#CFLAGS	= -Os -Wall -mmcu=$(MCU) -std=c++11 -I$(PWD) -DNO_DEBUG
+
 # Default flags for Ver 1.10 PCB.
 CFLAGS	= -Os -Wall -mmcu=$(MCU) -std=c++11 -I$(PWD) -DNO_SWAP -DNO_DEBUG
 
