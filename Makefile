@@ -31,6 +31,9 @@ size: $(TARGET).elf
 program: $(TARGET).hex
 	avrdude $(DUDEOPT) -U flash:w:$<:i
 
+program-hidspx: $(TARGET).hex
+	hidspx $<
+
 # Fuse High - 1100 1001 - !OCDEN | !JTAGEN | SPIEN | CKOPT | !EESAVE | BOOT(APP)
 # Fuse Low  - 1110 1111 - !BODLEVEL | !BODEN | SUT(10) | CLSEL(1111-EXT)
 #   expects 16MHz external clock
@@ -48,10 +51,10 @@ fuse-proto:
 %.bin: %.elf
 	$(OBJCOPY) -j .text -j .data -O binary $< $@
 
-JVSIO.o: jvsio/JVSIO.cpp *.h
+JVSIO.o: jvsio/JVSIO.cpp jvsio/JVSIO.h *.h
 	$(CC) -c $(CFLAGS) -o $@ $<
 
-%.o: %.cpp *.h
+%.o: %.cpp jvsio/JVSIO.h *.h
 	$(CC) -c $(CFLAGS) -o $@ $<
 
 $(TARGET).elf: $(OBJS)
