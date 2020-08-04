@@ -34,11 +34,32 @@ void Jamma::Initialize() {
     sw[i] = 0;
 }
 
+void Jamma::DetectMode() {
+  mode = (PINA & 0x30) ? Mode::kJamma : Mode::kMahjong;
+  if (mode == Mode::kJamma) {
+    DDRC = 0x00;
+    PORTC = 0xff;
+  } else {
+    // Hi-Z w/o PU for bit7-4.
+    DDRC = 0x00;
+    PORTC = 0x0f;
+  }
+}
+
+Jamma::Mode Jamma::GetMode() {
+  return mode;
+}
+
 void Jamma::Update(bool swap) {
   uint8_t pina = PINA;
   uint8_t pinb = PINB;
   uint8_t pinc = PINC;
   uint8_t pind = PIND;
+
+  uint8_t csw1 = pinb & 1;
+  uint8_t csw2 = pinc & 1;
+  current_coin_sw[0] &= csw1;
+  current_coin_sw[1] &= csw2;
 
   sw[0] = (pind & 0x10) ? 0 : 0x80;
   sw[1] =
@@ -48,6 +69,7 @@ void Jamma::Update(bool swap) {
       ((pina & 0x02) ? 0 : 0x10) |
       ((pina & 0x04) ? 0 : 0x08) |
       ((pina & 0x08) ? 0 : 0x04);
+
   if (swap) {
     sw[1] |=
 #if defined(ALT_SWAP)
@@ -62,6 +84,12 @@ void Jamma::Update(bool swap) {
         ((pinb & 0x04) ? 0 : 0x02) |  // B1
         ((pinb & 0x08) ? 0 : 0x01);   // B2
   }
+
+  if (mode == Mode::kMahjong) {
+    sw[2] = sw[3] = sw[4] = 0;
+    return;
+  }
+
   sw[2] =
       ((pinb & 0x40) ? 0 : 0x20) |    // B5
       ((pinb & 0x80) ? 0 : 0x10);     // B6
@@ -116,11 +144,6 @@ void Jamma::Update(bool swap) {
         ((pinc & 0x10) ? 0 : 0x80) |  // B3
         ((pinc & 0x20) ? 0 : 0x40);   // B4
   }
-
-  uint8_t csw1 = pinb & 1;
-  uint8_t csw2 = pinc & 1;
-  current_coin_sw[0] &= csw1;
-  current_coin_sw[1] &= csw2;
 }
 
 void Jamma::Sync() {
@@ -164,3 +187,13 @@ void Jamma::AddCoin(uint8_t index, uint8_t add) {
   if (index < 2)
     coin_count[index] += add;
 }
+
+void Jamma::DriveOutput(uint8_t output) {
+  if (mode != Mode::kMahjong)
+    return;
+  // Output low signal for the activated outputs.
+  out = output & 0xf0;
+  out = ((out >> 1) | (out << 3)) & 0xf0;
+  DDRC = out;
+}
+

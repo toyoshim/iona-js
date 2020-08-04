@@ -12,11 +12,12 @@
 namespace {
 
 #if defined(PROTO)
-const char id[] = "SEGA ENTERPRISES,LTD.compat;IONA-KVC-P0;ver1.10e";
+const char id[] = "SEGA ENTERPRISES,LTD.compat;IONA-KVC-P0;ver1.10f";
+#elif defined(MJ)
+const char id[] = "SEGA ENTERPRISES,LTD.compat;MP02-IONA-MJ;ver1.10f";
 #else
-const char id[] = "SEGA ENTERPRISES,LTD.compat;MP01-IONA-JS;ver1.10e";
+const char id[] = "SEGA ENTERPRISES,LTD.compat;MP01-IONA-JS;ver1.10f";
 #endif
-uint8_t gpout = 0;
 int8_t coin_index_bias = 0;
 
 Jamma jamma;
@@ -35,11 +36,16 @@ void loop(JVSIO& io) {
    case JVSIO::kCmdReset:
     coin_index_bias = 0;
     jamma.Initialize();
+#if defined(MJ)
+    jamma.DetectMode();
+#endif
     break;
    case JVSIO::kCmdIoId:
     io.pushReport(JVSIO::kReportOk);
     for (size_t i = 0; id[i]; ++i)
       io.pushReport(id[i]);
+    if (Jamma::Mode::kMahjong == jamma.GetMode())
+      io.pushReport('#');
     io.pushReport(0x00);
     break;
    case JVSIO::kCmdFunctionCheck:
@@ -115,7 +121,7 @@ void loop(JVSIO& io) {
     io.pushReport(JVSIO::kReportOk);
     break;
    case JVSIO::kCmdDriverOutput:
-    gpout = data[2];
+    jamma.DriveOutput(data[2]);
     io.pushReport(JVSIO::kReportOk);
     break;
   }
