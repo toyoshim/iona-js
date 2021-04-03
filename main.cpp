@@ -11,12 +11,16 @@
 
 namespace {
 
+#define VER "1.10f"
+
 #if defined(PROTO)
-const char id[] = "SEGA ENTERPRISES,LTD.compat;IONA-KVC-P0;ver1.10f";
+const char id[] = "SEGA ENTERPRISES,LTD.compat;IONA-KVC-P0;ver" VER;
 #elif defined(MJ)
-const char id[] = "SEGA ENTERPRISES,LTD.compat;MP02-IONA-MJ;ver1.10f";
+const char id[] = "SEGA ENTERPRISES,LTD.compat;MP02-IONA-MJ;ver" VER;
+#elif defined(NG)
+const char id[] = "SEGA ENTERPRISES,LTD.compat;MP03-IONA-NG;ver" VER;
 #else
-const char id[] = "SEGA ENTERPRISES,LTD.compat;MP01-IONA-JS;ver1.10f";
+const char id[] = "SEGA ENTERPRISES,LTD.compat;MP01-IONA-JS;ver" VER;
 #endif
 int8_t coin_index_bias = 0;
 

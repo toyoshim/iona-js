@@ -13,7 +13,10 @@
 #CFLAGS	= -Os -Wall -mmcu=$(MCU) -std=c++11 -I$(PWD) -DNO_SWAP -DNO_DEBUG
 
 # Default flags for MJ Ver 1.00 PCB.
-CFLAGS	= -Os -Wall -mmcu=$(MCU) -std=c++11 -I$(PWD) -DNO_SWAP -DNO_DEBUG -DMJ
+#CFLAGS	= -Os -Wall -mmcu=$(MCU) -std=c++11 -I$(PWD) -DNO_SWAP -DNO_DEBUG -DMJ
+
+# Default flags for NG Ver 1.00 PCB.
+CFLAGS	= -Os -Wall -mmcu=$(MCU) -std=c++11 -I$(PWD) -DNO_SWAP -DNO_DEBUG -DNG
 
 CC	= avr-g++
 OBJCOPY	= avr-objcopy

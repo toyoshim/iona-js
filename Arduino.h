@@ -33,5 +33,6 @@ extern class SerialLibrary {
 } Serial;
 
 void delayMicroseconds(uint32_t us);
+void delay(uint32_t ms);
 
 #endif  // __Arduino_H__

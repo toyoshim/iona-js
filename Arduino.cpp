@@ -98,3 +98,12 @@ void delayMicroseconds(uint32_t us) {
   }
   delayU8x1usec(us & 0xff);
 }
+
+void delay(uint32_t ms) {
+  for (uint32_t i = 0; i < ms; ++i) {
+    delayMicroseconds(250);
+    delayMicroseconds(250);
+    delayMicroseconds(250);
+    delayMicroseconds(250);
+  }
+}
